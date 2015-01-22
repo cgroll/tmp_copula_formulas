@@ -1,0 +1,190 @@
+#+TITLE: Copula factor models
+#+AUTHOR: Christian Groll
+#+DATE: 17.12.2014
+
+#+LATEX_HEADER: \usepackage{amsmath}
+#+LATEX_HEADER: \usepackage{natbib}
+#+LaTeX_CLASS_OPTIONS: [integrals, nointegrals]
+#+LaTeX_HEADER: \usepackage{geometry}
+#+LaTeX_HEADER: \geometry{a4paper,left=20mm,right=20mm, top=1cm, bottom=2cm} 
+
+#+LaTeX_HEADER: \newtheorem{theorem}{Theorem}[section]
+#+LaTeX_HEADER: \newtheorem{lemma}[theorem]{Lemma}
+#+LaTeX_HEADER: \newtheorem{proposition}[theorem]{Proposition}
+#+LaTeX_HEADER: \newtheorem{corollary}[theorem]{Corollary}
+
+#+LaTeX_HEADER: \newenvironment{proof}[1][Proof]{\begin{trivlist}
+#+LaTeX_HEADER: \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+#+LaTeX_HEADER: \newenvironment{definition}[1][Definition]{\begin{trivlist}
+#+LaTeX_HEADER: \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+#+LaTeX_HEADER: \newenvironment{example}[1][Example]{\begin{trivlist}
+#+LaTeX_HEADER: \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+#+LaTeX_HEADER: \newenvironment{remark}[1][Remark]{\begin{trivlist}
+#+LaTeX_HEADER: \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+#+LaTeX_HEADER: \newcommand{\qed}{\nobreak \ifvmode \relax \else
+#+LaTeX_HEADER:       \ifdim\lastskip<1.5em \hskip-\lastskip
+#+LaTeX_HEADER:       \hskip1.5em plus0em minus0.5em \fi \nobreak
+#+LaTeX_HEADER:       \vrule height0.75em width0.5em depth0.25em\fi}
+
+
+
+#+STARTUP: showall
+
+#+OPTIONS: toc:nil
+#+OPTIONS: todo:nil
+#+OPTIONS: tags:nil
+#+OPTIONS: H:5
+#+OPTIONS: skip:on
+#+OPTIONS: ^:nil
+
+#+PROPERTY: exports results
+#+PROPERTY: tangle yes
+#+EXPORT_SELECT_TAGS: exp_section
+
+#+PROPERTY: session session_cfm_local
+
+#+OPTIONS: LaTeX:dvipng     # Force using dvipng images
+
+
+
+Density decomposition:
+
+$$\begin{aligned}
+f(x_{1}, x_{2}, x_{3})&=f(x_{3}|x_{1},x_{2})f(x_{2}|x_{1})f(x_{1})
+\end{aligned}$$
+
+For the second term, we get:
+
+$$\begin{aligned}
+f(x_{1},x_{2})&=c_{12}(F(x_{1}), F(x_{2}))f(x_{1})f(x_{2})
+\end{aligned}$$
+
+$$\begin{aligned}
+f(x_{2}|x_{1})&=\frac{f(x_{1},x_{2})}{f(x_{1})}\\
+&=\frac{c_{12}(F(x_{1}), F(x_{2}))f(x_{1})f(x_{2})}{f(x_{1})}\\
+&=c_{12}(F(x_{1}), F(x_{2}))f(x_{2})
+\end{aligned}$$
+
+And, for the third term, we get:
+
+$$\begin{aligned}
+f(x_{3}|x_{1},x_{2})&=\frac{f(x_{2},x_{3}|x_{1})}{f(x_{2}|x_{1})}\\
+&=\frac{c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))f(x_{2}|x_{1})f(x_{3}|x_{1})}{f(x_{2}|x_{1})}\\
+&=c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))f(x_{3}|x_{1})\\
+&=c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))c_{13}(F(x_{1}),F(x_{3}))f(x_{3})\\
+\end{aligned}$$
+
+Together, we get:
+
+$$\begin{aligned}
+f(x_{1}, x_{2}, x_{3})&=f(x_{3}|x_{1},x_{2})f(x_{2}|x_{1})f(x_{1})\\
+&=c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))c_{13}(F(x_{1}),F(x_{3}))f(x_{3})\\
+&\cdot c_{12}(F(x_{1}), F(x_{2}))f(x_{2})f(x_{1})\\
+&=f(x_{1})f(x_{2})f(x_{3})c_{12}(F(x_{1}), F(x_{2}))c_{13}(F(x_{1}),F(x_{3}))\\
+&\cdot c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))
+\end{aligned}$$
+
+
+* Conditional distributions
+
+** Given $x1$:
+$$\begin{aligned}
+f(x_{2}|x_{1})&=\frac{c_{12}(u_{1},u_{2})f(x_{1})f(x_{2})}{f(x_{1})}\\
+&=c_{12}(u_{1},u_{2})f(x_{2})
+\end{aligned}$$
+
+$$\begin{aligned}
+f(x_{3}|x_{1})&=c_{13}(u_{1},u_{3})f(x_{3})
+\end{aligned}$$
+
+$$\begin{aligned}
+f(x_{2},x_{3}|x_{1})&=f(x_{3}|x_{1},x_{2})f(x_{2}|x_{1})
+\end{aligned}$$
+
+
+** Given $x2$:
+$$\begin{aligned}
+f(x_{1}|x_{2})&=\frac{c_{12}(u_{1},u_{2})f(x_{1})f(x_{2})}{f(x_{2})}\\
+&=c_{12}(u_{1},u_{2})f(x_{1})
+\end{aligned}$$
+
+However, the same factorization does not work for the next pair:
+$$\begin{aligned}
+f(x_{3}|x_{2})&=c_{23}(u_{2},u_{3})f(x_{2})
+\end{aligned}$$
+
+Copula $c_{23}(u_{2},u_{3})$ is not known.
+
+$$\begin{aligned}
+f(x_{3}|x_{2})&=\int f(x_{3}|x_{1},x_{2})\text{d}x_{1}\\
+&=\int c_{23|1}(F(x_{2}|x_{1}),
+F(x_{3}|x_{1}))c_{13}(F(x_{1}),F(x_{3}))f(x_{3}) \text{d}x_{1}
+\end{aligned}$$
+
+Still, however, simulation is not a problem. For copula data, we get:
+- simulate $u_{1}=C_{12}^{-1}(w_{1}|u_{2})$
+- given $u_{1}$, calculate $w_{2}=C_{12}(x_{2}|u_{1})$
+- given $w_{2}$, calculate $u^{0}_{3}=C_{23|1}(w_{3}|w_{2})$
+- $u_{3}=C_{12}(u^{0}_{3}|u_{1})$
+
+
+** Given $x3$:
+
+$$\begin{aligned}
+f(x_{1}|x_{3})&=c_{13}(u_{1},u_{3})f(x_{3})
+\end{aligned}$$
+
+However, for
+$$\begin{aligned}
+f(x_{2}|x_{3})&=c_{23}(u_{2},u_{3})f(x_{3})
+\end{aligned}$$
+we have the same problem as above. Simulation works, but the density
+can not be calculated.
+
+** Given two variables
+
+Given $x_{1}$ and $x_{2}$:
+$$\begin{aligned}
+f(x_{3}|x_{1},x_{2})&=c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))c_{13}(F(x_{1}),F(x_{3}))f(x_{3})
+\end{aligned}$$
+
+Given $x_{1}$ and $x_{3}$:
+$$\begin{aligned}
+f(x_{2}|x_{1},x_{3})&=c_{23|1}(F(x_{2}|x_{1}), F(x_{3}|x_{1}))c_{12}(F(x_{1}),F(x_{3}))f(x_{3})
+\end{aligned}$$
+
+
+* Including information
+
+For a given variable, the conditional density after inclusion of
+information about other variables can be computed iteratively:
+
+Without any information:
+
+$f(x_{4})$
+
+Knowing $x_{1}$:
+$$f(x_{4}|x_{1})=c_{14}(u_{1}, u_{4})f(u_{1}) $$
+Furthermore:
+$$f(x_{4}|x_{1},x_{2})=c_{24|1}(u_{2|1}, u_{4|1})f(u_{4}|u_{1})$$
+$$f(x_{4}|x_{1},x_{2},x_{3})=c_{34|12}(u_{3|12}, u_{4|12})f(u_{4}|u_{1},u_{2})$$
+
+Together:
+$$\begin{aligned}
+f(x_{4}|x_{1},x_{2},x_{3})&=c_{34|12}(u_{3|12},
+u_{4|12})c_{24|1}(u_{2|1}, u_{4|1})c_{14}(u_{1}, u_{4})f(x_{4})
+\end{aligned}$$
+
+
+
+* Miscellaneous
+
+
+
+$$\begin{aligned}
+f(x_{2},x_{3}|x_{1})&=\frac{f(x_{1},x_{2},x_{3})}{f(x_{1})}
+&\Leftrightarrow \\
+f(x_{2},x_{3}|x_{1})f(x_{1})&=f(x_{1},x_{2},x_{3})
+\end{aligned}$$
+
